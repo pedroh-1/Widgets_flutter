@@ -1,30 +1,42 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:flutter_application_1/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
+  testWidgets('Tela de Meu Perfil renderiza todos os elementos corretamente', (
+    WidgetTester tester,
+  ) async {
+    // Constrói a aplicação
     await tester.pumpWidget(const MyApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // 1. Verifica AppBar com o título "Meu Perfil"
+    expect(find.text('Meu Perfil'), findsOneWidget);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    // 2. Verifica foto de perfil no centro (CircleAvatar)
+    expect(find.byType(CircleAvatar), findsWidgets);
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // 3. Verifica nome do usuário "Maria Silva" em destaque
+    expect(find.text('Maria Silva'), findsOneWidget);
+
+    // 4. Verifica informações de contato
+    // Linha 1: ícone de email + texto maria@email.com
+    expect(find.byIcon(Icons.email), findsOneWidget);
+    expect(find.text('teste@email.com'), findsOneWidget);
+
+    // Linha 2: ícone de telefone + texto "(64) 99150-1980"
+    expect(find.byIcon(Icons.phone), findsOneWidget);
+    expect(find.text('(64) 99150-1980'), findsOneWidget);
+
+    // 5. Verifica botão azul escrito "Seguir"
+    final botaoSeguir = find.widgetWithText(ElevatedButton, 'Seguir');
+    expect(botaoSeguir, findsOneWidget);
+
+    // 6. Ao clicar no botão, deve aparecer um SnackBar com a mensagem "Você agora segue este perfil!"
+    await tester.tap(botaoSeguir);
+    await tester.pump(); // Inicia animação do SnackBar
+
+    expect(find.text('Você agora segue este perfil!'), findsOneWidget);
+    expect(find.byType(SnackBar), findsOneWidget);
   });
 }
